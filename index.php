@@ -3,27 +3,30 @@
 mb_http_output('UTF-8'); 
 
 $feedXML = file_get_contents("https://www.nepalmonitor.org/index.php/feed");
+$categoryHashtags = json_decode(file_get_contents("category-hashtags.json"), true);
 
 $xml=simplexml_load_string($feedXML) or die("There's an error in our Twitter feed system. We're working on it. Until then you can view new reports directly at nepalmonitor.org");
 
-$arr = array();
+$arr = array(' ');
 
 foreach ($xml->xpath('//item') as $item) {
-   
     $r = '';
     foreach($item->children() as $category){
-
         if($category->getName() == 'category'){
-            $r .= '#'.preg_replace('/ |\/|\(|\)/','_',strtolower((string)$category)).' ';
+            $categoryString = (string)$category;
+            if($categoryHashtags[$categoryString]){
+                $r .= ' #'.$categoryHashtags[$categoryString];
+            }else{
+                $r .= ' #'.(preg_split('/ |\//', $categoryString)[0]);
+            }
         }
-
     }
     array_push($arr, $r);
 }
 
 function str_replace_nth($search, $replace, $subject, $nth)
 {
-    $found = preg_match_all('/'.preg_quote($search).'/', $subject, $matches, PREG_OFFSET_CAPTURE);
+    $found = preg_match_all('/'.$search.'/', $subject, $matches, PREG_OFFSET_CAPTURE);
     if (false !== $found && $found > $nth) {
         return substr_replace($subject, $replace, $matches[0][$nth][1], strlen($search));
     }
@@ -31,8 +34,10 @@ function str_replace_nth($search, $replace, $subject, $nth)
 }
 $feedXML=htmlspecialchars($feedXML);
 
+$feedXML = preg_replace('/&lt;title&gt;(.{1,70})(.+)&lt;\/title&gt;/i', "&lt;title&gt;$1&lt;/title&gt;", $feedXML);
+
 foreach($arr as $m=>$s){
-    $feedXML = str_replace_nth('&lt;title&gt;', '&lt;title&gt;'.$arr[$m], $feedXML, $m);
+    $feedXML = str_replace_nth('&lt;\/title&gt;', $arr[$m].'&lt;/title&gt;', $feedXML, $m);
 }
 
 $report = fopen("feed.xml", w);
