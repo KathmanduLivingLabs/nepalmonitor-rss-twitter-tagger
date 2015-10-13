@@ -15,9 +15,12 @@ foreach ($xml->xpath('//item') as $item) {
         if($category->getName() == 'category'){
             $categoryString = (string)$category;
             if($categoryHashtags[$categoryString]){
+                if(strlen($r.' #'.$categoryHashtags[$categoryString])<=48)
                 $r .= ' #'.$categoryHashtags[$categoryString];
             }else{
-                $r .= ' #'.(preg_split('/ |\//', $categoryString)[0]);
+                $t = ' #'.(preg_split('/ |\//', $categoryString)[0]);
+                if(strlen($r.$t)<=48)
+                $r .= $t;
             }
         }
     }
@@ -26,7 +29,7 @@ foreach ($xml->xpath('//item') as $item) {
 
 function str_replace_nth($search, $replace, $subject, $nth)
 {
-    $found = preg_match_all('/'.$search.'/', $subject, $matches, PREG_OFFSET_CAPTURE);
+    $found = preg_match_all('/'.$search.'/u', $subject, $matches, PREG_OFFSET_CAPTURE);
     if (false !== $found && $found > $nth) {
         return substr_replace($subject, $replace, $matches[0][$nth][1], strlen($search));
     }
@@ -34,7 +37,7 @@ function str_replace_nth($search, $replace, $subject, $nth)
 }
 $feedXML=htmlspecialchars($feedXML);
 
-$feedXML = preg_replace('/&lt;title&gt;(.{1,70})(.+)&lt;\/title&gt;/i', "&lt;title&gt;$1&lt;/title&gt;", $feedXML);
+$feedXML = preg_replace('/&lt;title&gt;(.{1,70})(.+)&lt;\/title&gt;/u', "&lt;title&gt;$1&lt;/title&gt;", $feedXML);
 
 foreach($arr as $m=>$s){
     $feedXML = str_replace_nth('&lt;\/title&gt;', $arr[$m].'&lt;/title&gt;', $feedXML, $m);
