@@ -10,7 +10,7 @@ $xml=simplexml_load_string($feedXML) or die("There's an error in our Twitter fee
 $arr = array(' ');
 
 foreach ($xml->xpath('//item') as $item) {
-    $r = '';
+    $r = '...#Nepal';
     foreach($item->children() as $category){
         if($category->getName() == 'category'){
             $categoryString = (string)$category;
@@ -19,7 +19,7 @@ foreach ($xml->xpath('//item') as $item) {
                 $r .= ' #'.$categoryHashtags[$categoryString];
             }else{
                 $t = ' #'.(preg_split('/ |\//', $categoryString)[0]);
-                if(strlen($r.$t)<=48)
+                if(strlen($r.$t)<=38)
                 $r .= $t;
             }
         }
