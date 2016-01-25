@@ -15,7 +15,7 @@ foreach ($xml->xpath('//item') as $item) {
         if($category->getName() == 'category'){
             $categoryString = (string)$category;
             if($categoryHashtags[$categoryString]){
-                if(strlen($r.' #'.$categoryHashtags[$categoryString])<=48)
+                if(strlen($r.' #'.$categoryHashtags[$categoryString])<=38 and strlen($categoryHashtags[$categoryString])>=3) # If the current string + the new hashag are less then 38 characters long... and if the replacement category hastag is as long as 3 characters
                 $r .= ' #'.$categoryHashtags[$categoryString];
             }else{
                 $t = ' #'.(preg_split('/ |\//', $categoryString)[0]);
