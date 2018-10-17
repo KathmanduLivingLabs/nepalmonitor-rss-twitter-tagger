@@ -31,7 +31,6 @@ foreach ($xml->xpath('//item') as $item) { # For every item in the orginal feed 
     }
     array_push($arr, $r); # This is filling an array ($arr) with the strings created above. 
 }
-
 function str_replace_nth($search, $replace, $subject, $nth) # This is a creating a function to replace some items in the strings. 
 {
     $found = preg_match_all('/'.$search.'/u', $subject, $matches, PREG_OFFSET_CAPTURE);
@@ -52,6 +51,7 @@ foreach($arr as $m=>$s){
 
 $report = fopen("feed.xml", w);
 fwrite($report, htmlspecialchars_decode($feedXML)); #Overwrite feed.xml with our newly created feed while decoding special HTML characters put in above
+
 fclose($report);
 
 header('Location: feed.xml');
